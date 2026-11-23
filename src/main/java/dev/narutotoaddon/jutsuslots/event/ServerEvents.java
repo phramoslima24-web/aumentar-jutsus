@@ -1,3 +1,4 @@
+
 package dev.narutotoaddon.jutsuslots.event;
 
 import dev.narutotoaddon.jutsuslots.NarutotoJutsuSlots;
@@ -7,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.capabilities.AttachCapabilitiesEvent;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -15,7 +16,8 @@ import net.minecraftforge.fml.common.Mod;
 /** Anexa, copia (morte/End) e sincroniza os slots extras do jogador. */
 @Mod.EventBusSubscriber(modid = NarutotoJutsuSlots.MODID)
 public final class ServerEvents {
-    private static final ResourceLocation CAPABILITY_ID = new ResourceLocation(NarutotoJutsuSlots.MODID, "extra_slots");
+    private static final ResourceLocation CAPABILITY_ID =
+            new ResourceLocation(NarutotoJutsuSlots.MODID, "extra_slots");
 
     private ServerEvents() {
     }
@@ -29,13 +31,18 @@ public final class ServerEvents {
         }
     }
 
-    /** Morte / volta do End: os slots extras sobrevivem, como os jutsu_keyN do Narutoto. */
+    /** Morte / volta do End: os slots extras sobrevivem. */
     @SubscribeEvent
     public static void onClone(PlayerEvent.Clone event) {
         event.getOriginal().reviveCaps();
-        event.getOriginal().getCapability(ExtraSlotsProvider.CAPABILITY, null).ifPresent(oldData ->
-                event.getEntity().getCapability(ExtraSlotsProvider.CAPABILITY, null).ifPresent(newData ->
-                        newData.copyFrom(oldData)));
+
+        event.getOriginal()
+                .getCapability(ExtraSlotsProvider.CAPABILITY, null)
+                .ifPresent(oldData ->
+                        event.getEntity()
+                                .getCapability(ExtraSlotsProvider.CAPABILITY, null)
+                                .ifPresent(newData -> newData.copyFrom(oldData)));
+
         event.getOriginal().invalidateCaps();
     }
 
